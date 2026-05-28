@@ -361,7 +361,11 @@ class Usuario implements UserInterface
     {
         $roles = [];
         foreach ($this->userRoles as $rol) {
-            $roles[] = 'ROLE_' . strtoupper($rol->getNombreRol());
+            $nombreRol = strtoupper($rol->getNombreRol());
+            if (strpos($nombreRol, 'ROL_') === 0) {
+                $nombreRol = substr($nombreRol, 4);
+            }
+            $roles[] = 'ROLE_' . $nombreRol;
         }
         
         if (empty($roles)) {

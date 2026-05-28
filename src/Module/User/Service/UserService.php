@@ -72,6 +72,9 @@ class UserService
 
         if (is_array($rolesInput)) {
             foreach ($rolesInput as $roleName) {
+                if (strpos($roleName, 'rol_') !== 0) {
+                    $roleName = 'rol_' . $roleName;
+                }
                 $role = $this->rolRepository->findOneBy(['nombreRol' => $roleName]);
                 if ($role) {
                     $user->addUserRole($role);
@@ -80,10 +83,10 @@ class UserService
         }
 
         if ($user->getUserRoles()->isEmpty()) {
-            $defaultRole = $this->rolRepository->findOneBy(['nombreRol' => 'regular']);
+            $defaultRole = $this->rolRepository->findOneBy(['nombreRol' => 'rol_regular']);
             if (!$defaultRole) {
                 $defaultRole = new Rol();
-                $defaultRole->setNombreRol('regular');
+                $defaultRole->setNombreRol('rol_regular');
                 $this->em->persist($defaultRole);
             }
             $user->addUserRole($defaultRole);
@@ -137,6 +140,9 @@ class UserService
                 $user->removeUserRole($role);
             }
             foreach ($data['roles'] as $roleName) {
+                if (strpos($roleName, 'rol_') !== 0) {
+                    $roleName = 'rol_' . $roleName;
+                }
                 $role = $this->rolRepository->findOneBy(['nombreRol' => $roleName]);
                 if ($role) {
                     $user->addUserRole($role);

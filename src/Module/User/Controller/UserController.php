@@ -94,6 +94,12 @@ class UserController extends AbstractController
      *             @OA\Property(property="segundo_apellido", type="string", example="Gómez"),
      *             @OA\Property(property="tipo_documento", type="string", example="V"),
      *             @OA\Property(property="documento", type="string", example="12345678"),
+     *             @OA\Property(property="fecha_nacimiento", type="string", example="1990-01-01"),
+     *             @OA\Property(property="pais", type="string", example="Venezuela"),
+     *             @OA\Property(property="estado", type="string", example="Distrito Capital"),
+     *             @OA\Property(property="ciudad", type="string", example="Caracas"),
+     *             @OA\Property(property="direccion", type="string", example="Av. Principal"),
+     *             @OA\Property(property="sexo", type="string", example="M"),
      *             @OA\Property(property="cargo", type="string", example="Operador"),
      *             @OA\Property(property="roles", type="array", @OA\Items(type="string", example="administrador"))
      *         )
@@ -143,7 +149,9 @@ class UserController extends AbstractController
      */
     public function deactivateUser(int $id): JsonResponse
     {
-        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMINISTRADOR');
+        if (!$this->isGranted('ROLE_SUPER_ADMINISTRADOR') && !$this->isGranted('ROLE_ADMINISTRADOR')) {
+            throw $this->createAccessDeniedException('Access Denied.');
+        }
 
         try {
             $this->userService->deactivateUser($id);

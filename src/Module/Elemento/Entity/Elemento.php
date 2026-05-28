@@ -61,9 +61,9 @@ class Elemento
     private $tecnologia;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer", options={"default"=0})
      */
-    private $cantidad;
+    private $cantidad = 0;
 
     /**
      * @ORM\Column(type="string", length=100, nullable=true)
@@ -86,7 +86,7 @@ class Elemento
     private $activo = true;
 
     /**
-     * @ORM\Column(type="datetime", options={"default"="CURRENT_TIMESTAMP"})
+     * @ORM\Column(name="fecha_creacion", type="datetime", options={"default"="CURRENT_TIMESTAMP"})
      */
     private $createdAt;
 

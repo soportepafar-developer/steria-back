@@ -19,7 +19,7 @@ class Region
     private $id;
 
     /**
-     * @ORM\Column(name="nombre_region", type="string", length=100)
+     * @ORM\Column(name="nombre", type="string", length=100)
      */
     private $nombreRegion;
 
