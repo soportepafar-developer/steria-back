@@ -60,7 +60,11 @@ class GeoController extends AbstractController
                 'id' => $e->getId(),
                 'nombre_estado' => $e->getNombreEstado(),
                 'region_id' => $e->getRegion()->getId(),
-                'region_nombre' => $e->getRegion()->getNombreRegion()
+                'region_nombre' => $e->getRegion()->getNombreRegion(),
+                'color_estado' => $e->getColor(),
+                'color_region' => $e->getRegion()->getColor(),
+                'latitud' => $e->getLatitud(),
+                'longitud' => $e->getLongitud()
             ];
         }
 

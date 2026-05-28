@@ -97,15 +97,26 @@ class ElementoService
     {
         $elementos = $this->elementoRepository->findBy(['activo' => true]);
         
-        $resumen = [];
+        $grupos = [];
         foreach ($elementos as $elem) {
+            $tipo = $elem->getTipo();
             $estadoName = $elem->getEstado()->getNombreEstado();
-            if (!isset($resumen[$estadoName])) {
-                $resumen[$estadoName] = 0;
+            $regionName = $elem->getEstado()->getRegion()->getNombreRegion();
+            $key = $tipo . '|' . $estadoName;
+
+            if (!isset($grupos[$key])) {
+                $grupos[$key] = [
+                    'tipo' => $tipo,
+                    'estado' => $estadoName,
+                    'region' => $regionName,
+                    'total' => 0
+                ];
             }
-            $resumen[$estadoName]++;
+            
+            $cantidad = $elem->getCantidad() ?: 1;
+            $grupos[$key]['total'] += $cantidad;
         }
 
-        return $resumen;
+        return array_values($grupos);
     }
 }

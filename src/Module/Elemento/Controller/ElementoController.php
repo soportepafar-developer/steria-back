@@ -61,6 +61,15 @@ class ElementoController extends AbstractController
                 'estado_id' => $e->getEstado()->getId(),
                 'estado_nombre' => $e->getEstado()->getNombreEstado(),
                 'region_nombre' => $e->getEstado()->getRegion()->getNombreRegion(),
+                'latitud' => $e->getLatitud(),
+                'longitud' => $e->getLongitud(),
+                'direccion' => $e->getDireccion(),
+                'actividad' => $e->getActividad(),
+                'tecnologia' => $e->getTecnologia(),
+                'cantidad' => $e->getCantidad(),
+                'segmentacion' => $e->getSegmentacion(),
+                'codigo_dealer' => $e->getCodigoDealer(),
+                'clasificacion' => $e->getClasificacion(),
                 'created_at' => $e->getCreatedAt()->format('Y-m-d H:i:s')
             ];
         }
@@ -188,9 +197,6 @@ class ElementoController extends AbstractController
     public function resumenPorEstado(): JsonResponse
     {
         $resumen = $this->elementoService->getResumenPorEstado();
-        return $this->json([
-            'status' => 'success',
-            'data' => $resumen
-        ]);
+        return $this->json($resumen);
     }
 }

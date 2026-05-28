@@ -57,4 +57,52 @@ class Estado
 
         return $this;
     }
+
+    /**
+     * @ORM\Column(type="decimal", precision=10, scale=8, nullable=true)
+     */
+    private $latitud;
+
+    /**
+     * @ORM\Column(type="decimal", precision=10, scale=8, nullable=true)
+     */
+    private $longitud;
+
+    /**
+     * @ORM\Column(type="string", length=7, nullable=true)
+     */
+    private $color;
+
+    public function getLatitud(): ?string
+    {
+        return $this->latitud;
+    }
+
+    public function setLatitud(?string $latitud): self
+    {
+        $this->latitud = $latitud;
+        return $this;
+    }
+
+    public function getLongitud(): ?string
+    {
+        return $this->longitud;
+    }
+
+    public function setLongitud(?string $longitud): self
+    {
+        $this->longitud = $longitud;
+        return $this;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
+    public function setColor(?string $color): self
+    {
+        $this->color = $color;
+        return $this;
+    }
 }
