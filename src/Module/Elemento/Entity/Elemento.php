@@ -86,7 +86,7 @@ class Elemento
     private $activo = true;
 
     /**
-     * @ORM\Column(name="fecha_creacion", type="datetime", options={"default"="CURRENT_TIMESTAMP"})
+     * @ORM\Column(name="created_at", type="datetime", options={"default"="CURRENT_TIMESTAMP"})
      */
     private $createdAt;
 

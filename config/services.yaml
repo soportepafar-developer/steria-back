@@ -38,9 +38,17 @@ services:
         resource: '../src/Module/Import/Controller/'
         tags: ['controller.service_arguments']
 
+    App\Module\Historial\Controller\:
+        resource: '../src/Module/Historial/Controller/'
+        tags: ['controller.service_arguments']
+
     App\Module\Auth\Security\JWTCreatedListener:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
+
+    App\Module\Auth\Security\JWTAuthenticationSuccessListener:
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccess }
 
 
     # add more service definitions when explicit configuration is needed
