@@ -28,6 +28,7 @@ class JWTCreatedListener
         $payload['user_id'] = $user->getId();
         $payload['primer_nombre'] = $user->getPrimerNombre();
         $payload['primer_apellido'] = $user->getPrimerApellido();
+        $payload['cambiar_password'] = $user->getCambiarPassword();
 
         $event->setData($payload);
     }

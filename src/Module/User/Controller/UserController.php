@@ -252,4 +252,33 @@ class UserController extends AbstractController
             return $this->json(['error' => $e->getMessage()], 404);
         }
     }
+
+    /**
+     * @Route("/change-password", name="user_change_password", methods={"POST"})
+     */
+    public function changePassword(Request $request): JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->json(['error' => 'No autorizado.'], 401);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $currentPassword = $data['current_password'] ?? null;
+        $newPassword = $data['new_password'] ?? null;
+
+        if (!$currentPassword || !$newPassword) {
+            return $this->json(['error' => 'Faltan campos obligatorios: current_password, new_password.'], 400);
+        }
+
+        try {
+            $this->userService->changeUserPassword($user, $currentPassword, $newPassword);
+            return $this->json([
+                'status' => 'success',
+                'message' => 'Contraseña actualizada correctamente.'
+            ]);
+        } catch (\InvalidArgumentException $e) {
+            return $this->json(['error' => $e->getMessage()], 400);
+        }
+    }
 }

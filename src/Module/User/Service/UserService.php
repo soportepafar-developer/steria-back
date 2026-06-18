@@ -60,6 +60,7 @@ class UserService
         $user->setSexo($data['sexo'] ?? null);
         $user->setCargo($data['cargo'] ?? null);
         $user->setActivo(true);
+        $user->setCambiarPassword(true);
 
         if (!empty($data['fecha_nacimiento'])) {
             try {
@@ -132,6 +133,7 @@ class UserService
         if (!empty($data['password'])) {
             $encodedPassword = $this->passwordEncoder->encodePassword($user, $data['password']);
             $user->setPassword($encodedPassword);
+            $user->setCambiarPassword(false);
         }
 
         // Roles update must be verified in Controller (Admin check)
@@ -163,6 +165,22 @@ class UserService
         }
 
         $user->setActivo(false);
+        $this->em->flush();
+    }
+
+    public function changeUserPassword(Usuario $user, string $currentPassword, string $newPassword): void
+    {
+        if (!$this->passwordEncoder->isPasswordValid($user, $currentPassword)) {
+            throw new \InvalidArgumentException('La contraseña actual es incorrecta.');
+        }
+
+        if (strlen($newPassword) < 6) {
+            throw new \InvalidArgumentException('La nueva contraseña debe tener al menos 6 caracteres.');
+        }
+
+        $encodedPassword = $this->passwordEncoder->encodePassword($user, $newPassword);
+        $user->setPassword($encodedPassword);
+        $user->setCambiarPassword(false);
         $this->em->flush();
     }
 }

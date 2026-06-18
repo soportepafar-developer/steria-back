@@ -48,6 +48,7 @@ class JWTAuthenticationSuccessListener
             'primer_nombre' => $user->getPrimerNombre(),
             'primer_apellido' => $user->getPrimerApellido(),
             'roles' => $rolesObj,
+            'cambiar_password' => $user->getCambiarPassword(),
         ];
 
         $event->setData($data);

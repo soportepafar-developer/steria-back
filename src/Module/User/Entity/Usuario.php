@@ -107,6 +107,11 @@ class Usuario implements UserInterface
     private $activo = true;
 
     /**
+     * @ORM\Column(name="cambiar_password", type="boolean", options={"default"=true})
+     */
+    private $cambiarPassword = true;
+
+    /**
      * @ORM\ManyToMany(targetEntity=Rol::class)
      * @ORM\JoinTable(name="usuario_roles",
      *      joinColumns={@ORM\JoinColumn(name="usuario_id", referencedColumnName="id")},
@@ -387,5 +392,16 @@ class Usuario implements UserInterface
 
     public function eraseCredentials()
     {
+    }
+
+    public function getCambiarPassword(): bool
+    {
+        return (bool) $this->cambiarPassword;
+    }
+
+    public function setCambiarPassword(bool $cambiarPassword): self
+    {
+        $this->cambiarPassword = $cambiarPassword;
+        return $this;
     }
 }
