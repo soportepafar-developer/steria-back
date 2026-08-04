@@ -78,6 +78,38 @@ class ElementoController extends AbstractController
     }
 
     /**
+     * @Route("/filtrar-poligono", name="elementos_filter_poligono", methods={"POST"})
+     * @OA\Post(
+     *     summary="Filtra elementos dentro de un polígono WKT",
+     *     @OA\RequestBody(
+     *         description="WKT del MultiPolygon",
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="wkt", type="string", example="MULTIPOLYGON(((...)))")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Retorna los elementos encontrados"
+     *     )
+     * )
+     */
+    public function filterByPolygons(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        if (!isset($data['wkt']) || empty($data['wkt'])) {
+            return $this->json(['error' => 'El campo WKT es requerido'], 400);
+        }
+
+        try {
+            $elementos = $this->elementoRepository->findByPolygons($data['wkt']);
+            return $this->json($elementos);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
      * @Route("/crear", name="elemento_create", methods={"POST"})
      * @OA\Post(
      *     summary="Crea un nuevo elemento geográfico",
