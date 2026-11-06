@@ -1,1 +1,1 @@
-# GeoBackend2.0
+# steria-back

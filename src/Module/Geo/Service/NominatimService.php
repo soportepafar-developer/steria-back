@@ -27,7 +27,7 @@ class NominatimService
                 'limit' => 5
             ],
             'headers' => [
-                'User-Agent' => 'GeoBackendSymfony/1.0'
+                'User-Agent' => 'SteriaBackSymfony/1.0'
             ]
         ]);
 
