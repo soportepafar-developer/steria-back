@@ -2,6 +2,8 @@
 
 namespace App\Module\Geo\Controller;
 
+use App\Module\Config\Repository\EsquemaRegionalRepository;
+use App\Module\Config\Repository\EsquemaRegionEstadoRepository;
 use App\Module\Geo\Repository\EstadoRepository;
 use App\Module\Geo\Repository\RegionRepository;
 use App\Module\Geo\Service\NominatimService;
@@ -20,15 +22,21 @@ class GeoController extends AbstractController
     private $regionRepository;
     private $estadoRepository;
     private $nominatimService;
+    private $esquemaRepository;
+    private $esquemaRegionEstadoRepository;
 
     public function __construct(
         RegionRepository $regionRepository,
         EstadoRepository $estadoRepository,
-        NominatimService $nominatimService
+        NominatimService $nominatimService,
+        EsquemaRegionalRepository $esquemaRepository,
+        EsquemaRegionEstadoRepository $esquemaRegionEstadoRepository
     ) {
         $this->regionRepository = $regionRepository;
         $this->estadoRepository = $estadoRepository;
         $this->nominatimService = $nominatimService;
+        $this->esquemaRepository = $esquemaRepository;
+        $this->esquemaRegionEstadoRepository = $esquemaRegionEstadoRepository;
     }
 
     /**
@@ -36,12 +44,22 @@ class GeoController extends AbstractController
      */
     public function getRegiones(): JsonResponse
     {
-        $regiones = $this->regionRepository->findAll();
+        $esquemaActivo = $this->esquemaRepository->findActivo();
+        $regiones = $esquemaActivo
+            ? $esquemaActivo->getRegiones()->toArray()
+            : $this->regionRepository->findBy(['esquema' => null]);
+
+        if (empty($regiones)) {
+            $regiones = $this->regionRepository->findAll();
+        }
+
         $data = [];
         foreach ($regiones as $r) {
             $data[] = [
                 'id' => $r->getId(),
-                'nombre_region' => $r->getNombreRegion()
+                'clave' => $r->getClave(),
+                'nombre_region' => $r->getNombreRegion(),
+                'color' => $r->getColor()
             ];
         }
 
@@ -53,16 +71,22 @@ class GeoController extends AbstractController
      */
     public function getEstados(): JsonResponse
     {
+        $esquemaActivo = $this->esquemaRepository->findActivo();
+        $regionMap = $esquemaActivo
+            ? $this->esquemaRegionEstadoRepository->findEstadoRegionMapByEsquema($esquemaActivo)
+            : [];
+
         $estados = $this->estadoRepository->findAll();
         $data = [];
         foreach ($estados as $e) {
+            $region = $regionMap[$e->getId()] ?? $e->getRegion();
             $data[] = [
                 'id' => $e->getId(),
                 'nombre_estado' => $e->getNombreEstado(),
-                'region_id' => $e->getRegion()->getId(),
-                'region_nombre' => $e->getRegion()->getNombreRegion(),
+                'region_id' => $region ? $region->getId() : null,
+                'region_nombre' => $region ? $region->getNombreRegion() : null,
                 'color_estado' => $e->getColor(),
-                'color_region' => $e->getRegion()->getColor(),
+                'color_region' => $region ? $region->getColor() : null,
                 'latitud' => $e->getLatitud(),
                 'longitud' => $e->getLongitud()
             ];

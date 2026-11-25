@@ -41,6 +41,9 @@ services:
     App\Module\Historial\Controller\:
         resource: '../src/Module/Historial/Controller/'
         tags: ['controller.service_arguments']
+    App\Module\Config\Controller\:
+        resource: '../src/Module/Config/Controller/'
+        tags: ['controller.service_arguments']
 
     App\Module\Auth\Security\JWTCreatedListener:
         tags:

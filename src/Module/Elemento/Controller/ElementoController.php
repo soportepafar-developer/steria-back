@@ -2,6 +2,8 @@
 
 namespace App\Module\Elemento\Controller;
 
+use App\Module\Config\Repository\EsquemaRegionalRepository;
+use App\Module\Config\Repository\EsquemaRegionEstadoRepository;
 use App\Module\Elemento\Repository\ElementoRepository;
 use App\Module\Elemento\Service\ElementoService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,13 +20,19 @@ class ElementoController extends AbstractController
 {
     private $elementoRepository;
     private $elementoService;
+    private $esquemaRepository;
+    private $esquemaRegionEstadoRepository;
 
     public function __construct(
         ElementoRepository $elementoRepository,
-        ElementoService $elementoService
+        ElementoService $elementoService,
+        EsquemaRegionalRepository $esquemaRepository,
+        EsquemaRegionEstadoRepository $esquemaRegionEstadoRepository
     ) {
         $this->elementoRepository = $elementoRepository;
         $this->elementoService = $elementoService;
+        $this->esquemaRepository = $esquemaRepository;
+        $this->esquemaRegionEstadoRepository = $esquemaRegionEstadoRepository;
     }
 
     /**
@@ -51,16 +59,23 @@ class ElementoController extends AbstractController
      */
     public function listElementos(): JsonResponse
     {
+        $esquemaActivo = $this->esquemaRepository->findActivo();
+        $regionMap = $esquemaActivo
+            ? $this->esquemaRegionEstadoRepository->findEstadoRegionMapByEsquema($esquemaActivo)
+            : [];
+
         $elementos = $this->elementoRepository->findBy(['activo' => true]);
         $data = [];
         foreach ($elementos as $e) {
+            $estado = $e->getEstado();
+            $region = $regionMap[$estado->getId()] ?? $estado->getRegion();
             $data[] = [
                 'id' => $e->getId(),
                 'nombre' => $e->getNombre(),
                 'tipo' => $e->getTipo(),
-                'estado_id' => $e->getEstado()->getId(),
-                'estado_nombre' => $e->getEstado()->getNombreEstado(),
-                'region_nombre' => $e->getEstado()->getRegion()->getNombreRegion(),
+                'estado_id' => $estado->getId(),
+                'estado_nombre' => $estado->getNombreEstado(),
+                'region_nombre' => $region ? $region->getNombreRegion() : null,
                 'latitud' => $e->getLatitud(),
                 'longitud' => $e->getLongitud(),
                 'direccion' => $e->getDireccion(),
